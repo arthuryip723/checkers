@@ -5,21 +5,13 @@ class Piece
   attr_accessor :pos, :king
 
   def initialize(color, pos, board, king = false)
-    @king = king
-    # @grid = Array.new(8) { Array.new(8) }
-    @board = board
-    @color = color
-    @pos = pos
+    @color, @pos, @board, @king = color, pos, board, king
     board[pos] = self
   end
 
   def perform_slide(dest)
-    puts "inside perform slide..."
-    p dest
-    p valid_slide_positions
     return false if !valid_slide_positions.include?(dest)
     return false if board[dest]
-
     board.move(pos, dest)
     maybe_promote
     true
@@ -58,27 +50,25 @@ class Piece
   end
 
   def maybe_promote
-      return if king?
+    return if king?
     end_row_num = color == :black ? 7 : 0
     self.king = true if pos.first == end_row_num
   end
 
   # May or may not raise error.
   def perform_moves!(move_sequence)
-    # try to perform slide, return if succeeds
-    # p move_sequence
-    # puts "perform_moves! is called..."
     return if move_sequence.length == 1 && perform_slide(move_sequence.first)
 
     # try to perform jump, throw errors if doesn't successd
-    p move_sequence
-    move_sequence.each { |move| raise 'Cannot jump or slide' if !perform_jump(move) }
+    move_sequence.each { |move| raise InvalidMoveError.new("Cannot jump or slide") if !perform_jump(move) }
   end
 
   def perform_moves(move_sequence)
-    # p move_sequence
-    perform_moves!(move_sequence) if valid_move_sequence?(move_sequence)
-    raise "Error"
+    if valid_move_sequence?(move_sequence)
+      perform_moves!(move_sequence)
+      return
+    end
+    raise InvalidMoveError.new("Invalid Move")
   end
 
   def valid_move_sequence?(move_sequence)
@@ -87,11 +77,11 @@ class Piece
 
     begin
       temp_board[pos].perform_moves!(move_sequence)
-      return true
-    rescue => error
-      return false
-    else
-      return true
+      true
+    rescue InvalidMoveError => e
+      puts e.message
+      # p e.backtrace
+      false
     end
   end
 
@@ -102,6 +92,8 @@ class Piece
   def render
     str = king ? 'K' : 'M'
     str.colorize(color)
-    # str
   end
+end
+
+class InvalidMoveError < StandardError
 end
