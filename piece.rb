@@ -1,4 +1,5 @@
 require 'colorize'
+# require_relative 'game'
 
 class Piece
   attr_reader :color
@@ -39,6 +40,10 @@ class Piece
   attr_reader :board
 
   def perform_slide(dest)
+    p dest
+    p valid_slide_positions
+    board.render
+    p board[dest].nil?
     return false if !valid_slide_positions.include?(dest)
     return false if board[dest]
     board.move(pos, dest)
@@ -47,6 +52,8 @@ class Piece
   end
 
   def perform_jump(dest)
+    p dest
+    p valid_jump_positions
     return false if !valid_jump_positions.include?(dest)
     return false if !board[dest].nil?
 
@@ -80,7 +87,7 @@ class Piece
 
   def maybe_promote
     return if king?
-    end_row_num = color == :black ? 7 : 0
+    end_row_num = color == :black ? Board::SIZE - 1 : 0
     self.king = true if pos.first == end_row_num
   end
 

@@ -7,10 +7,13 @@ class Board
   attr_reader :grid
   def initialize(fill = true)
     @grid = Array.new(SIZE) { Array.new(SIZE) }
-    populate if fill
-    # Piece.new(:black, [5,5], self)
-    # Piece.new(:black, [5,3], self)
-    # Piece.new(:red, [6,4], self)
+    # populate if fill
+    if fill
+      Piece.new(:black, [5,5], self)
+      Piece.new(:black, [5,3], self)
+      Piece.new(:black, [6,6], self)
+      Piece.new(:red, [6,4], self)
+    end
     # self[[7,7]] = nil
   end
 
