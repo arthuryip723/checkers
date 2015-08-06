@@ -25,10 +25,11 @@ class Player
         retry
       end
     end
-    
+
     [piece_pos, sequence]
   end
 
+  private
   def get_a_position
     begin
       piece_pos = gets.chomp.split(',').map(&:to_i)

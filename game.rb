@@ -20,6 +20,8 @@ class Game
     puts "#{current_player.color} wins!"
   end
 
+  private
+
   def play_turn
     begin
       piece_pos, moves = current_player.get_move
