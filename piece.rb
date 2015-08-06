@@ -2,6 +2,9 @@ require 'colorize'
 # require_relative 'game'
 
 class Piece
+  UP_MOVES = [[-1, -1], [-1, 1]]
+  DOWN_MOVES = [[1, -1], [1, 1]]
+
   attr_reader :color
   attr_accessor :pos, :king
 
@@ -40,22 +43,17 @@ class Piece
   attr_reader :board
 
   def perform_slide(dest)
-    p dest
-    p valid_slide_positions
     board.render
-    p board[dest].nil?
-    return false if !valid_slide_positions.include?(dest)
-    return false if board[dest]
+    return false unless valid_slide_positions.include?(dest)
+    return false unless board[dest].nil?
     board.move(pos, dest)
     maybe_promote
     true
   end
 
   def perform_jump(dest)
-    p dest
-    p valid_jump_positions
-    return false if !valid_jump_positions.include?(dest)
-    return false if !board[dest].nil?
+    return false unless valid_jump_positions.include?(dest)
+    return false unless board[dest].nil?
 
     #test whether opponent is on the direction you jump to
     opponent_pos = [(pos[0] + dest[0]) / 2, (pos[1] + dest[1]) / 2]
@@ -71,9 +69,9 @@ class Piece
 
   def move_diffs
     if king?
-      [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+      UP_MOVES + DOWN_MOVES
     else
-      color == :black ? [[1, -1], [1, 1]] : [[-1, -1], [-1, 1]]
+      color == :black ? DOWN_MOVES : UP_MOVES
     end
   end
 
